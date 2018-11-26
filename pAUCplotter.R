@@ -1,7 +1,7 @@
 library(pROC)
 
 pAUCplotter <- function(response, predictor, partial.auc = c(1, .8), partial.auc.focus = "specificity",
-                        boot.n = 2000) {
+                        boot.n = 2000, mainTitle = " ") {
    rocFit <- roc(response = response, predictor = predictor)
    aucEst <- rocFit$auc
    aucCI <- ci.auc(rocFit)
@@ -11,7 +11,7 @@ pAUCplotter <- function(response, predictor, partial.auc = c(1, .8), partial.auc
    smoothed <- smooth(rocFit, method="density")
    
    
-   plot(0, 0, type="n", xlab="1 - Specificity", ylab="Sensitivity", main="Score A", xlim=c(0,1), ylim=c(0,1))
+   plot(0, 0, type="n", xlab="1 - Specificity", ylab="Sensitivity", main=mainTitle, xlim=c(0,1), ylim=c(0,1))
    # note: this piece only works for focus == "specificity" right now
    polygon(list(x = 1 - c(partial.auc, rev(partial.auc)), y=c(0,0,1,1)), col="lightgray", lwd=.5)
    lines(1-smoothed$sp, smoothed$se, col="darkorange2", lwd=2)
@@ -40,7 +40,8 @@ dev.off()
 
 # plot with extra annotations
 pdf("figure2.pdf", width=7, height=7)
-pAUCplotter(y, x1, boot.n = 100) # need to fix this so that objects are stored for subsequent commands
-text(x=.9, y=.05, labels=paste("AUC =", round(aucEst, 2)))
-text(x=.9, y=0, labels=substitute(paste('pAUC'['(0,0.2)'], ' = ', pAucEst), list(pAucEst=format(pAucEst, nsmall=2, digits=2))))
+fit <- pAUCplotter(y, x1, boot.n = 100) 
+text(x=.9, y=.05, labels=paste("AUC =", format(round(fit$aucEst, 2), nsmall=2)))
+text(x=.9, y=0, labels=substitute(paste('pAUC'['(0,0.2)'], ' = ', pAucEst), 
+                                  list(pAucEst=format(round(fit$pAucEst, 2), nsmall=2, digits=2))))
 dev.off()
