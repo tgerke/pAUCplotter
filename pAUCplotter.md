@@ -1,17 +1,13 @@
-#' ---
-#' title: pAUCplotter()
-#' author: ""
-#' date: ""
-#' output: github_document
-#' ---
+pAUCplotter()
+================
 
-#+ setup, include=FALSE
-knitr::opts_chunk$set(fig.width = 7, fig.height = 7)
-
-#+ library, message=FALSE
+``` r
 library(pROC)
+```
 
-#' ## The Function
+## The Function
+
+``` r
 pAUCplotter <- function(response, predictor, partial.auc = c(1, .8), partial.auc.focus = "specificity",
                         boot.n = 2000, mainTitle = " ") {
    rocFit <- roc(response = response, predictor = predictor)
@@ -37,24 +33,38 @@ pAUCplotter <- function(response, predictor, partial.auc = c(1, .8), partial.auc
    
    list(aucEst = aucEst, aucCI = aucCI, pAucEst = pAucEst, pAucCI = pAucCI, plot = p)
 }
+```
 
-#' ## Test the function
+## Test the function
 
-#' ### Generate Data
+### Generate Data
+
+``` r
 set.seed(234)
 ncases <- ncontrols <- 10000 #in each group
 y <- c(rep(1, ncases), rep(0, ncontrols))
 x1offset <- c(rbeta(ncases, .1, .1), rbeta(ncontrols, .5, 100))
 x1 <- as.numeric(scale(x1offset + rnorm(ncases+ncontrols, sd=.3)))
+```
 
-#' ### Plot
+### Plot
+
+``` r
 fit <- pAUCplotter(y, x1, boot.n = 100)
 # pdf("figure1.pdf", width=7, height=7)
 fit$plot()
+```
 
-#' ### Plot with extra annotations
+![](pAUCplotter_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+### Plot with extra annotations
+
+``` r
 # pdf("figure2.pdf", width=7, height=7)
 fit$plot()
 text(x=.9, y=.05, labels=paste("AUC =", format(round(fit$aucEst, 2), nsmall=2)))
 text(x=.9, y=0, labels=substitute(paste('pAUC'['(0,0.2)'], ' = ', pAucEst), 
                                   list(pAucEst=format(round(fit$pAucEst, 2), nsmall=2, digits=2))))
+```
+
+![](pAUCplotter_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
