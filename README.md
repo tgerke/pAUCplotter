@@ -14,7 +14,8 @@ pAUCplotter <- function(
    partial.auc = c(1, .8), 
    partial.auc.focus = "specificity",
    boot.n = 2000, 
-   mainTitle = " "
+   mainTitle = " ",
+   progress = "text"
 ) {
   rocFit  <- roc(response = response, predictor = predictor)
   aucEst  <- rocFit$auc
@@ -22,7 +23,7 @@ pAUCplotter <- function(
   pAucEst <- auc(rocFit, partial.auc = partial.auc, partial.auc.focus = partial.auc.focus)
   pAucCI  <- ci.auc(rocFit,
     partial.auc = partial.auc, partial.auc.focus = partial.auc.focus,
-    boot.n = boot.n, reuse.auc = FALSE
+    boot.n = boot.n, reuse.auc = FALSE, progress = "text"
   )
   smoothed <- smooth(rocFit, method = "density")
 
@@ -69,11 +70,14 @@ x1 <- as.numeric(scale(x1offset + rnorm(ncases + ncontrols, sd = .3)))
 
 ``` r
 fit <- pAUCplotter(y, x1, boot.n = 100)
+```
+
+``` r
 # pdf("figure1.pdf", width=7, height=7)
 fit$plot()
 ```
 
-![](pAUCplotter_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](pAUCplotter_files/figure-gfm/plot-1.png)<!-- -->
 
 ### Plot with extra annotations
 
@@ -88,4 +92,4 @@ text(x = .9, y = 0, labels = substitute(
 ))
 ```
 
-![](pAUCplotter_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](pAUCplotter_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
