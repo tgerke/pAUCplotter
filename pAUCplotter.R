@@ -18,7 +18,8 @@ pAUCplotter <- function(
    partial.auc = c(1, .8), 
    partial.auc.focus = "specificity",
    boot.n = 2000, 
-   mainTitle = " "
+   mainTitle = " ",
+   progress = "text"
 ) {
   rocFit  <- roc(response = response, predictor = predictor)
   aucEst  <- rocFit$auc
@@ -26,7 +27,7 @@ pAUCplotter <- function(
   pAucEst <- auc(rocFit, partial.auc = partial.auc, partial.auc.focus = partial.auc.focus)
   pAucCI  <- ci.auc(rocFit,
     partial.auc = partial.auc, partial.auc.focus = partial.auc.focus,
-    boot.n = boot.n, reuse.auc = FALSE
+    boot.n = boot.n, reuse.auc = FALSE, progress = "text"
   )
   smoothed <- smooth(rocFit, method = "density")
 
@@ -66,7 +67,9 @@ x1offset <- c(rbeta(ncases, .1, .1), rbeta(ncontrols, .5, 100))
 x1 <- as.numeric(scale(x1offset + rnorm(ncases + ncontrols, sd = .3)))
 
 #' ### Plot
+#+ fit, message=FALSE, results="hide"
 fit <- pAUCplotter(y, x1, boot.n = 100)
+#+ plot
 # pdf("figure1.pdf", width=7, height=7)
 fit$plot()
 
